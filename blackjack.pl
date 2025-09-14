@@ -89,12 +89,14 @@ jogar :-
     % Verifica Blackjack imediato
     valor_mao(Jogador, ValorJogador),
     (ValorJogador =:= 21 ->
-        delayText('Blackjack! Voc\u00EA venceu imediatamente!'), nl
+        delayText('Blackjack! Voc\u00EA venceu imediatamente!'), nl,
+        rejogar
     ;
         turno_jogador(Jogador, RestoDeck, NovoDeck, MaoJogador),
         valor_mao(MaoJogador, ValorJogadorFinal),
         (ValorJogadorFinal > 21 ->
-            delayText('Voc\u00EA estourou! Dealer vence.'), nl
+            delayText('Voc\u00EA estourou! Dealer vence.'), nl,
+            rejogar
         ;
             turno_dealer(Dealer, NovoDeck, MaoDealer),
             valor_mao(MaoDealer, ValorDealer),
@@ -152,8 +154,24 @@ turno_dealer(Mao, Deck, MaoFinal) :-
 % Resultado final
 % ---------------------------
 resultado(ValorJogador, ValorDealer) :-
-    (ValorDealer > 21 -> delayText('Dealer estourou! Voc\u00EA venceu!'), nl
+    ((ValorDealer > 21 -> delayText('Dealer estourou! Voc\u00EA venceu!'), nl
     ; ValorJogador > ValorDealer -> delayText('Voc\u00EA venceu!'), nl
     ; ValorJogador < ValorDealer -> delayText('Dealer venceu!'), nl
     ; ValorJogador =:= ValorDealer -> delayText('Empate!'), nl
+    ), rejogar
+    ).
+
+% ---------------------------
+% Jogar novamente
+% ---------------------------
+rejogar :-
+    nl, delayText('Gostaria de jogar novamente? (sim./nao.): '), read(Acao),
+    (Acao == sim ->
+        jogar
+    ;
+        Acao == nao ->
+        halt
+    ;
+        nl, delayText('Resposta inv\u00E1lida.'),
+        rejogar
     ).
