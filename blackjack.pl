@@ -9,7 +9,7 @@
 delay_put_char(X) :-
     put_char(X),
     flush_output, 
-    sleep(0.03).
+    sleep(0.025).
 
 delayText(String) :-
     string_chars(String, Chars),
@@ -22,7 +22,9 @@ valor(2,2). valor(3,3). valor(4,4). valor(5,5). valor(6,6).
 valor(7,7). valor(8,8). valor(9,9). valor(10,10).
 valor(j,10). valor(q,10). valor(k,10). valor(a,11).
 
-naipe(copas). naipe(espadas). naipe(ouros). naipe(paus).
+% Naipes em unicode
+%      copas           espadas           ouros             paus
+naipe('\u2665'). naipe('\u2660'). naipe('\u2666'). naipe('\u2663').
 
 % Gera baralho completo
 baralho(Deck) :-
@@ -80,27 +82,27 @@ jogar :-
     write('Suas cartas:'), nl,
     mostra_mao(Jogador),
     nl,
-    delayText('Carta visível do dealer:'), nl,
+    delayText('Carta vis\u00EDvel do dealer:'), nl,
     mostra_carta(D1), nl,
     write('============================='), nl,
 
     % Verifica Blackjack imediato
     valor_mao(Jogador, ValorJogador),
     (ValorJogador =:= 21 ->
-        delayText('Blackjack! Você venceu imediatamente!'), nl
+        delayText('Blackjack! Voc\u00EA venceu imediatamente!'), nl
     ;
         turno_jogador(Jogador, RestoDeck, NovoDeck, MaoJogador),
         valor_mao(MaoJogador, ValorJogadorFinal),
         (ValorJogadorFinal > 21 ->
-            delayText('Você estourou! Dealer vence.'), nl
+            delayText('Voc\u00EA estourou! Dealer vence.'), nl
         ;
             turno_dealer(Dealer, NovoDeck, MaoDealer),
             valor_mao(MaoDealer, ValorDealer),
 
             nl, delayText('---------- Resultado ----------'), nl,
-            delayText('Sua mão final: '), mostra_mao(MaoJogador),
+            delayText('Sua m\u00E3o final: '), mostra_mao(MaoJogador),
             delayText('Valor: '), delayText(ValorJogadorFinal), nl, nl,
-            delayText('Mão final do dealer: '), mostra_mao(MaoDealer),
+            delayText('M\u00E3o final do dealer: '), mostra_mao(MaoDealer),
             delayText('Valor: '), delayText(ValorDealer), nl, nl,
             resultado(ValorJogadorFinal, ValorDealer)
         )
@@ -115,13 +117,13 @@ turno_jogador(Mao, Deck, DeckFinal, MaoFinal) :-
         DeckFinal = Deck,
         MaoFinal = Mao
     ;   
-        delayText('Total da sua mao: '), delayText(Valor), nl,
+        delayText('Total da sua m\u00E3o: '), delayText(Valor), nl,
         nl, delayText('Digite "pedir." para pedir carta ou "parar." para parar: '), read(Acao),
         (Acao == pedir ->
             Deck = [NovaCarta|RestoDeck],
             append(Mao, [NovaCarta], NovaMao),
             write('============================='), nl,
-            delayText('Sua mão agora:'), nl,
+            delayText('Sua m\u00E3o agora:'), nl,
             mostra_mao(NovaMao), nl,
             turno_jogador(NovaMao, RestoDeck, DeckFinal, MaoFinal)
         ;
@@ -139,7 +141,7 @@ turno_dealer(Mao, Deck, MaoFinal) :-
     (Valor < 17 ->
         Deck = [NovaCarta|RestoDeck],
         append(Mao, [NovaCarta], NovaMao),
-        nl, delayText('O dealer pediu! Mao do Dealer:'), nl,
+        nl, delayText('O dealer pediu! M\u00E3o do Dealer:'), nl,
         mostra_mao(NovaMao), nl,
         turno_dealer(NovaMao, RestoDeck, MaoFinal)
     ;
@@ -150,8 +152,8 @@ turno_dealer(Mao, Deck, MaoFinal) :-
 % Resultado final
 % ---------------------------
 resultado(ValorJogador, ValorDealer) :-
-    (ValorDealer > 21 -> delayText('Dealer estourou! Você venceu!'), nl
-    ; ValorJogador > ValorDealer -> delayText('Você venceu!'), nl
+    (ValorDealer > 21 -> delayText('Dealer estourou! Voc\u00EA venceu!'), nl
+    ; ValorJogador > ValorDealer -> delayText('Voc\u00EA venceu!'), nl
     ; ValorJogador < ValorDealer -> delayText('Dealer venceu!'), nl
     ; ValorJogador =:= ValorDealer -> delayText('Empate!'), nl
     ).
